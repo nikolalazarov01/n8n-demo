@@ -27,11 +27,16 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> LogAction()
+    public async Task<IActionResult> LogAction([FromBody] LogActionRequest request)
     {
+        if (request == null || string.IsNullOrEmpty(request.Text) || request.Text.Length > 100)
+        {
+            return Json(new { success = false, message = "Text is required and must be 100 characters or less." });
+        }
+
         try
         {
-            var result = await _n8nService.LogActionAsync();
+            var result = await _n8nService.LogActionAsync(request.Text);
             return Json(new { success = true, message = result });
         }
         catch (Exception ex)

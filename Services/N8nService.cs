@@ -1,4 +1,5 @@
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Project.Services
@@ -12,12 +13,14 @@ namespace Project.Services
             _httpClient = httpClient;
         }
 
-        public async Task<string> LogActionAsync()
+        public async Task<string> LogActionAsync(string text)
         {
             // Replace with your actual n8n webhook URL
-            var url = "https://your-n8n-instance.com/webhook/log-action";
+            var url = "http://localhost:5678/webhook-test/execute-workflow";
 
-            var response = await _httpClient.GetAsync(url); // Assuming GET, change to PostAsJsonAsync if needed
+            var json = $"{{\"text\":\"{text.Replace("\"", "\\\"")}\"}}"; // Escape quotes
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
