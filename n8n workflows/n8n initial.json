@@ -1,0 +1,166 @@
+{
+  "name": "n8n initial",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "17efcf7b-e8da-4a05-bb3d-b3dc8a7c110f",
+              "name": "=text",
+              "value": "={{$json.body.text}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        0
+      ],
+      "id": "4d37f8d8-d287-4964-ae0a-f134d2ff4c64",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "execute-workflow",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "aae05838-fbd4-40a3-9610-a9597ef716b4",
+      "name": "Webhook",
+      "webhookId": "48686b50-3b3e-43b5-8c38-aecf5ad80cdb"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a helpful .NET assistant.\n\nAnswer the following technical question clearly and concisely.\nIf relevant, include short practical guidance.\n\nQuestion:\n{{$json.text}}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7f6350c4-3c57-44e2-a094-7d14e2cd04f4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        208
+      ],
+      "id": "8e2dc568-a728-40f7-8415-f13279ea44f5",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d75522bc-dfba-426a-9a57-0e02742290bc",
+              "name": "message",
+              "value": "={{$json.text}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        0
+      ],
+      "id": "52cd3a82-1305-4faa-8046-8fe8b7da6ae5",
+      "name": "Edit Fields2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "f13f0bfe-2fec-4bd8-8f1b-f6743ad86cf9",
+  "meta": {
+    "instanceId": "0101bb3a8d46fcd0ad922acc26dc03e02c37e2f329f2336e8107843432e55783"
+  },
+  "id": "4293edApaZkjKZR2IfhwB",
+  "tags": []
+}

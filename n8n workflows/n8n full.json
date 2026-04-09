@@ -1,0 +1,358 @@
+{
+  "name": "n8n full",
+  "nodes": [
+    {
+      "parameters": {
+        "inputText": "={{$json.text}}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Technical",
+              "description": "questions about .NET, APIs, configuration, dependency injection, authentication, coding help"
+            },
+            {
+              "category": "Bug",
+              "description": "errors, crashes, exceptions, broken behavior, unexpected results"
+            }
+          ]
+        },
+        "options": {
+          "enableAutoFixing": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -16
+      ],
+      "id": "818051ae-27fc-4c9f-b1ae-53f7fcf65b42",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "17efcf7b-e8da-4a05-bb3d-b3dc8a7c110f",
+              "name": "=text",
+              "value": "={{$json.body.text}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "a9c98774-8409-4a0e-934d-a9cc9f83f65d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        192
+      ],
+      "id": "0eff384c-4304-405a-ae48-65f6d613c303",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "repository": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "title": "=Bug report: {{$json.text}}",
+        "body": "=utomatically created from AI workflow.\n\nDescription:\n{{$json.text}}\n\nSource: n8n automation",
+        "labels": [],
+        "assignees": []
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        112
+      ],
+      "id": "8ec439eb-4225-4f9f-bf4e-b7e4c0c1aaae",
+      "name": "Create an issue",
+      "webhookId": "8cd5a205-5774-4a91-9f68-13ada3e3e459",
+      "credentials": {
+        "githubApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d75522bc-dfba-426a-9a57-0e02742290bc",
+              "name": "message",
+              "value": "=Created an issue in GitHub with ID {{$json.number}}: {{$json.html_url}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        112
+      ],
+      "id": "cd1d44ff-bd50-427d-a00c-c10856b1e106",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "execute-workflow",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -432,
+        -16
+      ],
+      "id": "dd7d3972-101a-4f00-b4bc-28afb8f83335",
+      "name": "Webhook",
+      "webhookId": "48686b50-3b3e-43b5-8c38-aecf5ad80cdb"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a helpful .NET assistant.\n\nAnswer the following technical question clearly and concisely.\nIf relevant, include short practical guidance.\n\nQuestion:\n{{$json.text}}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        288,
+        -208
+      ],
+      "id": "a3def54f-c4bb-4525-9017-902f1feb63bb",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        -32
+      ],
+      "id": "a580b98c-753a-4e79-b57c-96db5d24f7c0",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d75522bc-dfba-426a-9a57-0e02742290bc",
+              "name": "message",
+              "value": "={{$json.text}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        -208
+      ],
+      "id": "b5c03dd8-83e3-4eb6-9f04-2a3008f62f9a",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        -16
+      ],
+      "id": "096125b6-3d0b-4331-9a63-0a437c591ff2",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create an issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "386dd15b-1195-4e63-afd4-9f9178d7ff45",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0101bb3a8d46fcd0ad922acc26dc03e02c37e2f329f2336e8107843432e55783"
+  },
+  "id": "XbC2nKsKxTdAAZ9NFftG1",
+  "tags": []
+}

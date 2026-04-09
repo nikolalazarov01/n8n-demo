@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Project.Models;
 using Project.Services;
@@ -37,7 +38,16 @@ public class HomeController : Controller
         try
         {
             var result = await _n8nService.LogActionAsync(request.Text);
-            return Json(new { success = true, message = result });
+            var n8nResponse = JsonSerializer.Deserialize<N8nResponse>(result, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return Json(new
+            {
+                success = true,
+                message = n8nResponse?.Message
+            });
         }
         catch (Exception ex)
         {
